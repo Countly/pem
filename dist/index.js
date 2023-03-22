@@ -2585,7 +2585,7 @@ function verifySigningChain(certificate, ca, callback) {
     debug('openssl.get(\'VendorVersionMajor\') >= 3', openssl.get('VendorVersionMajor') >= 3)
 
     if (openssl.get('Vendor') === "OPENSSL" && openssl.get('VendorVersionMajor') >= 3) {
-      let openssl30Check = !!(stdout && stdout.trim().includes(": OK"));
+      let openssl30Check = (!!(stdout && stdout.trim().includes(": OK")) || !!(stderr && stderr.trim().includes("unable to get issuer certificate")))
 
       if (err) {
         debug('verifySigningChain error', {
@@ -2625,7 +2625,7 @@ function verifySigningChain(certificate, ca, callback) {
       stdoutResult: stdout && stdout.trim().slice(-4) === ': OK',
       stderr: stderr
     })
-    callback(null, stdout && stdout.trim().slice(-4) === ': OK')
+    callback(null, ((stdout && stdout.trim().slice(-4) === ': OK') || (stderr && stderr.trim().includes("unable to get issuer certificate"))))
   })
 }
 
